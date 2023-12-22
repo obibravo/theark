@@ -80,18 +80,19 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+import platform
+if platform.system() != 'Windows':
+    DATABASES = {
+    'default': {
+            'ENGINE': 'mysql.connector.django',
+            'USER': 'obibravo',
+            'HOST': 'obibravo.mysql.pythonanywhere-services.com',
+            'PORT':'3306',
+            'NAME':'obibravo$theark',
+            'PASSWORD': 'theark2023',
+        }
 
-DATABASES = {
-'default': {
-        'ENGINE': 'mysql.connector.django',
-        'USER': 'obibravo',
-        'HOST': 'obibravo.mysql.pythonanywhere-services.com',
-        'PORT':'3306',
-        'NAME':'obibravo$theark',
-        'PASSWORD': 'theark2023',
     }
-
-}
 
 
 # Password validation
