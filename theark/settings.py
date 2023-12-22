@@ -89,7 +89,9 @@ if platform.system() != 'Windows':
             'HOST': 'obibravo.mysql.pythonanywhere-services.com',
             'PORT':'3306',
             'NAME':'obibravo$theark',
-            'PASSWORD': 'theark2023',
+            'PASSWORD': 'theark2023','OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
         }
 
     }
