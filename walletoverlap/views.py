@@ -42,7 +42,7 @@ def get_real_time_transactions(request):
         return JsonResponse({'status': 'error', 'message': str(e)})
 
 
-from web3 import Web3
+# from web3 import Web3
 
 def get_wallet_transactions(request):
     try:
