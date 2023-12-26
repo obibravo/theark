@@ -218,14 +218,15 @@ def etherscan(request):
             iter+=1
 
             # Create and save Token instance with the associated Wallet
-            token = Token.objects.create(
-                wallet=wallet[0],
-                token_name=token_name +str(iter),
-                token_address=token_address+str(iter),
-                token_balance=token_balance,
-                quantity=token_quantity
-            )
-            try:token.save()
+            try:
+                token = Token.objects.create(
+                    wallet=wallet[0],
+                    token_name=token_name +str(iter),
+                    token_address=token_address+str(iter),
+                    token_balance=token_balance,
+                    quantity=token_quantity
+                )
+                token.save()
             except:pass
 
     else:
