@@ -158,12 +158,12 @@ def get_wallet_transactions(request):
 import requests
 
 
-def etherscan(request):
+def etherscan(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e5793714'):
     # Your Etherscan API key
     api_key = '28XVCAQXKFI2GN8GGB3SFHMVQ3XS2XTXK5'
 
     # Ethereum address to check for transaction details
-    wallet_address = '0x03770b07c5c315722c5866e64cde04e6e5793714'
+    
 
     # Define the Etherscan API endpoint
     api_endpoint = f'https://api.etherscan.io/api'
@@ -238,11 +238,11 @@ def etherscan(request):
 from django.db.models import Sum
 from django.core.serializers import serialize
 
-def overlap(request):
+def overlap(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e5793714'):
     template_name = 'your_template.html'
 
     # Retrieve the wallet
-    wallet = Wallet.objects.get(pk=1)
+    wallet = Wallet.objects.get(address=wallet_address)
 
     # Retrieve tokens for the wallet and calculate the sum of quantities
     token_sum = Token.objects.filter(wallet=wallet).aggregate(Sum('quantity'))['quantity__sum']
