@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-e3*lv$d*ea!215$=vng9u@0&_e9u^4svm0+27tgexr#w4(5=o5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['obibravo.pythonanywhere.com']
+ALLOWED_HOSTS = ['obibravo.pythonanywhere.com', '127.0.0.1']
 
 
 # Application definition
@@ -80,19 +80,19 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-# import platform
-# if platform.system() != 'Windows':
-#     DATABASES = {
-#     'default': {
-#             'ENGINE': 'mysql.connector.django',
-#             'USER': 'obibravo',
-#             'HOST': 'obibravo.mysql.pythonanywhere-services.com',
-#             'PORT':'3306',
-#             'NAME':'obibravo$theark',
-#             'PASSWORD': 'theark2023',
-#         }
+import platform
+if platform.system() != 'Windows':
+    DATABASES = {
+    'default': {
+            'ENGINE': 'mysql.connector.django',
+            'USER': 'obibravo',
+            'HOST': 'obibravo.mysql.pythonanywhere-services.com',
+            'PORT':'3306',
+            'NAME':'obibravo$theark',
+            'PASSWORD': 'theark2023',
+        }
 
-#     }
+    }
 
 
 # Password validation

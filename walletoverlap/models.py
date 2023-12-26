@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Wallet(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     name=models.CharField(max_length=255,unique=True,null=False)
     address = models.CharField(max_length=255,unique=True,null=False)
     balance = models.DecimalField(max_digits=10, decimal_places=2)
@@ -13,7 +13,7 @@ class Wallet(models.Model):
     # Add other fields as needed
 
     def __str__(self):
-        return f"{self.user.username}'s Wallet"
+        return f"{self.name}'s Wallet"
 
 class Token(models.Model):
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
@@ -30,7 +30,7 @@ class Token(models.Model):
 
 
     def __str__(self):
-        return f"{self.token_name} in {self.wallet.user.username}'s Wallet"
+        return f"{self.token_name} in {self.wallet.name}'s Wallet"
 
 
 # ethereum_webhook/models.py

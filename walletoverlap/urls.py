@@ -9,4 +9,6 @@ urlpatterns = [
     path('ethereum-webhook/', ethereum_webhook, name='ethereum_webhook'),
     path('get-real-time-transactions/', get_real_time_transactions, name='get_real_time_transactions'),
     path('get_wallet_transactions/', get_wallet_transactions, name='get_wallet_transactions'),
+    path('etherscan/', etherscan, name='etherscan'),
+    path('overlap/', overlap, name='overlap'),
 ]

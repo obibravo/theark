@@ -1,9 +1,10 @@
 # ethereum_webhook/views.py
 from django.http import JsonResponse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from web3 import Web3
 import json
-from .models import EthereumTransaction
+from .models import EthereumTransaction, Token, Wallet
 
 @csrf_exempt
 def ethereum_webhook(request):
@@ -54,9 +55,69 @@ def get_wallet_transactions(request):
         # Ensure the node is connected
         # if not w3.isConnected():
         #     return JsonResponse({'status': 'error', 'message': 'Unable to connect to Ethereum node'})
+        wallet_address = '0x12AE66CDc592e10B60f9097a7b0D3C59fce29876'
+        real_ethereum_address='0x03770b07c5c315722c5866e64cde04e6e5793714'
+
+        usdt_contract_abi = [
+  {
+    "anonymous": False,
+    "inputs": [
+      {
+        "indexed": True,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": True,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": False,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "Transfer",
+    "type": "event"
+  }
+
+
+            # Include the ABI of the USDT contract. You can obtain this from the Ethereum contract source code or other reliable sources.
+        ]
+
+        # Create contract instance
+        usdt_contract = w3.eth.contract(address=wallet_address, abi=usdt_contract_abi)
+
+        # Ethereum address to check for USDT transactions
+        target_address = '0x12AE66CDc592e10B60f9097a7b0D3C59fce29876'
+        print(w3.eth.get_transaction(555555))
+        
+
+        contract = w3.eth.contract(address=wallet_address, abi=abi)
+        
+        result = w3.eth.get_transaction(txhash)
+        func_obj, func_params = contract.decode_function_input(result["input"])
+        print (result["input"])
+        print(func_params)
+
+
+        # Get USDT transfer events for the target address
+        usdt_transfers = usdt_contract.events.Transfer().getLogs(
+            {
+                'fromBlock': 0,
+                'toBlock': 'latest',
+                # 'filter': {
+                #     'from': target_address,
+                # },
+            }
+        )
+        print(usdt_transfers)
 
         # Get the transaction count (number of transactions) for the wallet address
-        wallet_address = '0x12AE66CDc592e10B60f9097a7b0D3C59fce29876'
         checksum_address = w3.to_checksum_address(wallet_address)
         print(1)
         transaction_count = w3.eth.get_transaction_count(wallet_address)
@@ -93,3 +154,100 @@ def get_wallet_transactions(request):
 # result = get_wallet_transactions(wallet_address)
 
 # print(result)
+
+import requests
+
+
+def etherscan(request):
+    # Your Etherscan API key
+    api_key = '28XVCAQXKFI2GN8GGB3SFHMVQ3XS2XTXK5'
+
+    # Ethereum address to check for transaction details
+    wallet_address = '0x03770b07c5c315722c5866e64cde04e6e5793714'
+
+    # Define the Etherscan API endpoint
+    api_endpoint = f'https://api.etherscan.io/api'
+
+    # Set the action to 'txlist' to get the list of transactions
+    action = 'txlist'
+
+    # Make the API request
+    params = {
+        'module': 'account',
+        'action': action,
+        'address': wallet_address,
+        'apikey': api_key,
+    }
+
+    response = requests.get(api_endpoint, params=params)
+    data = response.json()
+
+    # Check if the request was successful
+    if data['status'] == '1':
+        # Print transaction details
+        wallet = Wallet.objects.get_or_create(
+            name=wallet_address,
+            address=wallet_address,
+            balance=0
+        )
+        iter=0
+        for tx in data['result']:
+            print("Transaction Hash:", tx['hash'])
+            print("Block Number:", tx['blockNumber'])
+            print("Timestamp:", tx['timeStamp'])
+            print("From:", tx['from'])
+            print("To:", tx['to'])
+            print("Value in Ether:", float(tx['value']) / 1e18)
+            print("Gas Price:", float(tx['gasPrice']) / 1e9  , "Gwei")
+            print("--------------------")
+
+
+            # user = form.cleaned_data['user']
+            wallet_name =wallet_address
+            wallet_address = wallet_address
+            wallet_balance =0
+            token_name = wallet_address
+            token_address =  tx['hash']
+            token_balance =0
+            token_quantity =  float(tx['value']) / 1e18
+
+            # Create and save Wallet instance
+            print(wallet)
+            iter+=1
+
+            # Create and save Token instance with the associated Wallet
+            token = Token.objects.get_or_create(
+                wallet=wallet[0],
+                token_name=token_name +str(iter),
+                token_address=token_address+str(iter),
+                token_balance=token_balance,
+                quantity=token_quantity
+            )
+
+    else:
+        print("Failed to retrieve transaction details. Check your API key or try again later.")
+        print("Error Message:", data['message'])
+    print(len(data))
+    return  JsonResponse({'data': data})
+
+from django.db.models import Sum
+from django.core.serializers import serialize
+
+def overlap(request):
+    template_name = 'your_template.html'
+
+    # Retrieve the wallet
+    wallet = Wallet.objects.get(pk=1)
+
+    # Retrieve tokens for the wallet and calculate the sum of quantities
+    token_sum = Token.objects.filter(wallet=wallet).aggregate(Sum('quantity'))['quantity__sum']
+
+    # Optionally, you can retrieve the individual tokens as well
+    tokens = Token.objects.filter(wallet=wallet)
+    tokens_quantity=[]
+    for i in tokens:tokens_quantity.append([i.token_address ,i.quantity])
+    context={'wallet': wallet.name, 'token_sum': str(token_sum)+' in ether', 'tokens':tokens_quantity
+        #serialize('json', [str(i.quantity) for i in tokens ])
+             }
+    return  JsonResponse({'context': context})
+    # return render(request, template_name, context)
