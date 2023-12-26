@@ -190,6 +190,8 @@ def etherscan(request):
             address=wallet_address,
             balance=0
         )
+        try:wallet.save()
+        except:pass
         iter=0
         for tx in data['result']:
             print("Transaction Hash:", tx['hash'])
@@ -223,6 +225,8 @@ def etherscan(request):
                 token_balance=token_balance,
                 quantity=token_quantity
             )
+            try:token.save()
+            except:pass
 
     else:
         print("Failed to retrieve transaction details. Check your API key or try again later.")
