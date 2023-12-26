@@ -209,7 +209,7 @@ def etherscan(request):
             token_name = wallet_address
             token_address =  tx['hash']
             token_balance =0
-            token_quantity =  float(tx['value']) / 1e18
+            token_quantity =  float(float(tx['value']) / 1e18)
 
             # Create and save Wallet instance
             print(wallet)
