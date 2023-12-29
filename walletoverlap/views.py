@@ -139,7 +139,7 @@ def ethplorer_address_info_with_address(request,wallet_address = None):
 from django.db.models import Sum
 
 def overlap(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e5793714',return_dict=False):
-    template='overlap1.html'
+    template='templates/overlap1.html'
     wallet = Wallet.objects.get(address=wallet_address)
     token_sum = Token.objects.filter(wallet=wallet).aggregate(Sum('token_initial_price'))['token_initial_price__sum']
 
