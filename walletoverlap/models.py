@@ -9,6 +9,7 @@ class Wallet(models.Model):
     balance = models.DecimalField(max_digits=10, decimal_places=2)
     balance = models.DecimalField(max_digits=10, decimal_places=2)
     tokens = models.ManyToManyField('Token', related_name='wallets')
+    time_created = models.DateTimeField(default=timezone.now)
     
     # Add other fields as needed
 
@@ -17,10 +18,11 @@ class Wallet(models.Model):
 
 class Token(models.Model):
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
-    token_name = models.CharField(max_length=255,unique=True,null=False)
-    token_address = models.CharField(max_length=255,unique=True,null=False)
-    token_balance = models.DecimalField(max_digits=10, decimal_places=2)
-    quantity = models.DecimalField(max_digits=64, decimal_places=2)
+    token_name = models.CharField(max_length=255,unique=False,null=False)
+    token_address = models.CharField(max_length=255,unique=False,null=False)
+    token_initial_price = models.DecimalField(max_digits=40,default=0,null=True, decimal_places=10)
+    quantity = models.DecimalField(max_digits=64, decimal_places=6)
+    currency = models.CharField(max_length=255 ,null=True)
     time_created = models.DateTimeField(default=timezone.now)
 
     class Meta:

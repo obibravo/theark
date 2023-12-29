@@ -1,183 +1,22 @@
-# ethereum_webhook/views.py
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-# from web3 import Web3
 import json
 from .models import EthereumTransaction, Token, Wallet
-
-@csrf_exempt
-def ethereum_webhook(request):
-    pass
-    # ... (existing code)
-
-def get_real_time_transactions(request):
-    try:
-        # Connect to an Ethereum node (replace 'http://your-ethereum-node-url' with an actual node URL)
-        w3 = Web3(Web3.HTTPProvider('https://eth-mainnet.g.alchemy.com/v2/h6ixsVSdhsgyM_edF3zzDIfATY3DU57e'))
-
-        # Get the latest block number
-        latest_block_number = w3.eth.blockNumber
-
-        # Get transactions from the latest block
-        transactions = w3.eth.get_block(latest_block_number)['transactions']
-        print(transactions)
-
-        # Process and save transactions to the database
-        for tx_hash in transactions:
-            tx = w3.eth.get_transaction(tx_hash)
-            from_address = tx['from']
-            to_address = tx['to']
-            value = w3.fromWei(tx['value'], 'ether')
-
-            EthereumTransaction.objects.create(
-                transaction_hash=tx_hash,
-                from_address=from_address,
-                to_address=to_address,
-                value=value
-            )
-
-        return JsonResponse({'status': 'success'})
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)})
-
-
-# from web3 import Web3
-
-def get_wallet_transactions(request):
-    try:
-        wallet_address=None; node_url='https://eth-mainnet.g.alchemy.com/v2/h6ixsVSdhsgyM_edF3zzDlfATY3DU57e'
-        # Connect to the Ethereum node
-        print(1333)
-        w3 = Web3(Web3.HTTPProvider(node_url))
-        print(1222)
-
-        # Ensure the node is connected
-        # if not w3.isConnected():
-        #     return JsonResponse({'status': 'error', 'message': 'Unable to connect to Ethereum node'})
-        wallet_address = '0x12AE66CDc592e10B60f9097a7b0D3C59fce29876'
-        real_ethereum_address='0x03770b07c5c315722c5866e64cde04e6e5793714'
-
-        usdt_contract_abi = [
-  {
-    "anonymous": False,
-    "inputs": [
-      {
-        "indexed": True,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": True,
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "indexed": False,
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      }
-    ],
-    "name": "Transfer",
-    "type": "event"
-  }
-
-
-            # Include the ABI of the USDT contract. You can obtain this from the Ethereum contract source code or other reliable sources.
-        ]
-
-        # Create contract instance
-        usdt_contract = w3.eth.contract(address=wallet_address, abi=usdt_contract_abi)
-
-        # Ethereum address to check for USDT transactions
-        target_address = '0x12AE66CDc592e10B60f9097a7b0D3C59fce29876'
-        print(w3.eth.get_transaction(555555))
-        
-
-        contract = w3.eth.contract(address=wallet_address, abi=abi)
-        
-        result = w3.eth.get_transaction(txhash)
-        func_obj, func_params = contract.decode_function_input(result["input"])
-        print (result["input"])
-        print(func_params)
-
-
-        # Get USDT transfer events for the target address
-        usdt_transfers = usdt_contract.events.Transfer().getLogs(
-            {
-                'fromBlock': 0,
-                'toBlock': 'latest',
-                # 'filter': {
-                #     'from': target_address,
-                # },
-            }
-        )
-        print(usdt_transfers)
-
-        # Get the transaction count (number of transactions) for the wallet address
-        checksum_address = w3.to_checksum_address(wallet_address)
-        print(1)
-        transaction_count = w3.eth.get_transaction_count(wallet_address)
-        print(12)
-        tx_hash = w3.eth.get_transaction_receipt('0xe2dd28160e480d1a4b95152b00cfd507749474ea2712d9fe575beec88e0d7d10')
-        print(tx_hash)
-
-        # Get the list of transactions
-        transactions = []
-        for i in range(transaction_count):
-            # Get transaction hash
-            tx_hash = w3.eth.get_transaction_receipt(wallet_address)
-            tx_hash = w3.eth.get_transaction_by_block(w3.eth.get_block, i)['hash']
-            tx = w3.eth.getTransaction(tx_hash)
-
-            # Extract relevant transaction data
-            transaction_data = {
-                'hash': tx_hash,
-                'from': tx['from'],
-                'to': tx['to'],
-                'value': w3.fromWei(tx['value'], 'ether'),
-                'gas_price': w3.fromWei(tx['gasPrice'], 'gwei'),
-                'timestamp': w3.eth.getBlock(tx['blockNumber'])['timestamp'],
-            }
-
-            transactions.append(transaction_data)
-
-        return JsonResponse({'status': 'success', 'transactions': transactions})
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)})
-
-# Example usage
-# wallet_address = '0x03770b07c5c315722c5866e64cde04e6e5793714'
-# result = get_wallet_transactions(wallet_address)
-
-# print(result)
-
 import requests
+
+def website(request,template=None):
+    if template is not None: template=template
+    else: template='index.html'
+    context=all_overlap(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e5793714',return_dict=True)
+    return render(request,template,context)
 
 
 def etherscan(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e5793714'):
-    # Your Etherscan API key
     api_key = '28XVCAQXKFI2GN8GGB3SFHMVQ3XS2XTXK5'
-
-    # Ethereum address to check for transaction details
-    
-
-    # Define the Etherscan API endpoint
     api_endpoint = f'https://api.etherscan.io/api'
-
-    # Set the action to 'txlist' to get the list of transactions
     action = 'txlist'
-
-    # Make the API request
-    params = {
-        'module': 'account',
-        'action': action,
-        'address': wallet_address,
-        'apikey': api_key,
-    }
+    params = { 'module': 'account','action': action,
+        'address': wallet_address,'apikey': api_key,    }
 
     response = requests.get(api_endpoint, params=params)
     data = response.json()
@@ -212,12 +51,8 @@ def etherscan(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e57937
             token_address =  tx['hash']
             token_balance =0
             token_quantity =  float(float(tx['value']) / 1e18)
-
-            # Create and save Wallet instance
             print(wallet)
             iter+=1
-
-            # Create and save Token instance with the associated Wallet
             try:
                 token = Token.objects.create(
                     wallet=wallet[0],
@@ -235,24 +70,110 @@ def etherscan(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e57937
     print(len(data))
     return  JsonResponse({'data': data})
 
+def ethplorer_address_info(request,wallet_address = '0xc1b2c7b19b745e2d07d3a25259f340ae61b8febb'):
+    api_endpoint = f'https://api.ethplorer.io/getAddressInfo/{wallet_address}?apiKey=freekey'
+    m='https://api.ethplorer.io/getAddressInfo/0xc1b2c7b19b745e2d07d3a25259f340ae61b8febb?apiKey=freekey'
+
+    response = requests.get(api_endpoint )
+    data = response.json()
+    token_details=[]
+    wallet = Wallet.objects.get_or_create(
+        name=wallet_address,
+        address=wallet_address,
+        balance=0
+    )
+    try:wallet.save()
+    except:pass
+    failed_token=[]
+    for i in data['tokens']:
+        tokenInfo=i['tokenInfo']
+        try:decimals=tokenInfo['decimals']
+        except:decimals=0
+        token_name=tokenInfo['name']
+        address=tokenInfo['address']
+        symbol=tokenInfo['symbol']
+        rawBalance=int(i['rawBalance'])/int(10** int(decimals))
+        try:
+            price=tokenInfo['price']['rate']            
+            currency=tokenInfo['price']['currency']
+            token_initial_price=price * rawBalance
+        except:token_initial_price=None;currency=None
+
+        try:
+            token = Token.objects.create(
+                wallet=wallet[0],
+                token_name=token_name , token_address=address,
+                token_initial_price=token_initial_price,
+                quantity=rawBalance, currency=currency
+            )
+            token.save()
+        except Exception as e:
+            m=(str(e), wallet[0].address, token_name , address, token_initial_price, rawBalance, currency )
+            failed_token.append(m)
+
+        token_details.append([symbol,decimals,token_name,rawBalance,price,currency])
+        print(token_details,'\n')
+
+    return  JsonResponse({'total failed_token':len(failed_token),'failed_token':failed_token,'token_details':token_details,
+                          'data': data,'total tokens':len(data['tokens'])})
+
+def ethplorer_address_info_with_address(request,wallet_address = None):
+    return ethplorer_address_info(request,wallet_address = wallet_address)
+
+# def ethplorer(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e5793714'):
+#     api_endpoint = f'https://api.ethplorer.io/getTokenInfo/{wallet_address}?apiKey=freekey'
+#     api_key='28XVCAQXKFI2GN8GGB3SFHMVQ3XS2XTXK5'
+#     api_endpoint=f'https://api.etherscan.io/api?module=account&action=tokentx&address={wallet_address}&startblock=0&endblock=999999999&sort=asc&apikey={api_key}'
+#     api_endpoint=f'https://api.etherscan.io/api?module=account&action=tokenbalance&address={wallet_address}&sort=asc&apikey={api_key}'
+#     print(api_endpoint)
+
+#     response = requests.get(api_endpoint )
+#     data = response.json()
+#     print(data)
+#     token_details=[]
+
+#     return  JsonResponse({'token_details':token_details,'data': data})
+
+
+
 from django.db.models import Sum
-from django.core.serializers import serialize
 
-def overlap(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e5793714'):
-    template_name = 'your_template.html'
-
-    # Retrieve the wallet
+def overlap(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e5793714',return_dict=False):
+    template='overlap1.html'
     wallet = Wallet.objects.get(address=wallet_address)
+    token_sum = Token.objects.filter(wallet=wallet).aggregate(Sum('token_initial_price'))['token_initial_price__sum']
 
-    # Retrieve tokens for the wallet and calculate the sum of quantities
-    token_sum = Token.objects.filter(wallet=wallet).aggregate(Sum('quantity'))['quantity__sum']
-
-    # Optionally, you can retrieve the individual tokens as well
     tokens = Token.objects.filter(wallet=wallet)
     tokens_quantity=[]
-    for i in tokens:tokens_quantity.append([i.token_address ,i.quantity])
-    context={'wallet': wallet.name, 'token_sum': str(token_sum)+' in ether', 'tokens':tokens_quantity
-        #serialize('json', [str(i.quantity) for i in tokens ])
-             }
-    return  JsonResponse({'context': context})
-    # return render(request, template_name, context)
+    for i in tokens:
+        if i.quantity is not None and i.token_initial_price is not None:
+            each_token_price=float(i.quantity)* float(i.token_initial_price)
+        else:each_token_price=None
+        tokens_quantity+=[{'token_name':i.token_name,'quantity':i.quantity,'token_initial_price':
+        i.token_initial_price ,'each_token_price':each_token_price }]
+    context={'all_tokens_in_address':{'wallet': wallet.name, 'token_sum': str(token_sum)+' in USD', 'tokens':tokens_quantity,
+             'amount_of_token':len(tokens) }  ,'time_created':wallet.time_created          }
+    if return_dict==True:
+        context={'wallet': wallet.name, 'token_sum': str(token_sum)+' in USD', 'tokens':tokens_quantity,
+             'amount_of_token':len(tokens)             }
+        return context
+    return render(request,template,context)
+
+
+def all_overlap(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e5793714',return_dict=False):
+    all_wallets=Wallet.objects.all()
+    all_wallets_dict={}
+    all_wallet_list=[]
+    for ii in all_wallets:
+        wallet_addresses=ii.address
+        wallet_info= overlap(request,wallet_address = wallet_addresses,return_dict=True)
+        all_wallets_dict={**all_wallets_dict, **wallet_info}
+        all_wallet_list.append(all_wallets_dict)
+    # print(all_wallets_dict)
+    context={'all_wallets_dict':[{'wallet':oo['wallet'],'token_sum':oo['token_sum'],
+                            'amount_of_token':oo['amount_of_token'],'wallets':oo['wallet'] }
+                                                        for oo in all_wallet_list],
+                                              }
+    if return_dict==True:return context
+    return  JsonResponse(context)
+
