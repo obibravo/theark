@@ -6,7 +6,7 @@ import requests
 
 def website(request,template=None):
     if template is not None: template=template
-    else: template='index.html'
+    else: template='templates/index.html'
     context=all_overlap(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e5793714',return_dict=True)
     return render(request,template,context)
 
