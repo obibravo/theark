@@ -97,7 +97,7 @@ def ethplorer_address_info(request,wallet_address = '0xc1b2c7b19b745e2d07d3a2525
             price=tokenInfo['price']['rate']            
             currency=tokenInfo['price']['currency']
             token_initial_price=price * rawBalance
-        except:token_initial_price=None;currency=None
+        except:token_initial_price=None;currency=None;price=None
 
         try:
             token = Token.objects.create(
