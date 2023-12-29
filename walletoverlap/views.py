@@ -33,14 +33,14 @@ def etherscan(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e57937
         except:pass
         iter=0
         for tx in data['result']:
-            print("Transaction Hash:", tx['hash'])
-            print("Block Number:", tx['blockNumber'])
-            print("Timestamp:", tx['timeStamp'])
-            print("From:", tx['from'])
-            print("To:", tx['to'])
-            print("Value in Ether:", float(tx['value']) / 1e18)
-            print("Gas Price:", float(tx['gasPrice']) / 1e9  , "Gwei")
-            print("--------------------")
+            #print("Transaction Hash:", tx['hash'])
+            #print("Block Number:", tx['blockNumber'])
+            #print("Timestamp:", tx['timeStamp'])
+            #print("From:", tx['from'])
+            #print("To:", tx['to'])
+            #print("Value in Ether:", float(tx['value']) / 1e18)
+            #print("Gas Price:", float(tx['gasPrice']) / 1e9  , "Gwei")
+            #print("--------------------")
 
 
             # user = form.cleaned_data['user']
@@ -51,7 +51,7 @@ def etherscan(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e57937
             token_address =  tx['hash']
             token_balance =0
             token_quantity =  float(float(tx['value']) / 1e18)
-            #print(wallet)
+            ##print(wallet)
             iter+=1
             try:
                 token = Token.objects.create(
@@ -64,10 +64,10 @@ def etherscan(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e57937
                 token.save()
             except:pass
 
-    else:
-        print("Failed to retrieve transaction details. Check your API key or try again later.")
-        print("Error Message:", data['message'])
-    print(len(data))
+    else:pass
+        #print("Failed to retrieve transaction details. Check your API key or try again later.")
+        #print("Error Message:", data['message'])
+    #print(len(data))
     return  JsonResponse({'data': data})
 
 def ethplorer_address_info(request,wallet_address = '0xc1b2c7b19b745e2d07d3a25259f340ae61b8febb'):
@@ -112,7 +112,7 @@ def ethplorer_address_info(request,wallet_address = '0xc1b2c7b19b745e2d07d3a2525
             failed_token.append(m)
 
         token_details.append([symbol,decimals,token_name,rawBalance,price,currency])
-        print(token_details,'\n')
+        #print(token_details,'\n')
 
     return  JsonResponse({'total failed_token':len(failed_token),'failed_token':failed_token,'token_details':token_details,
                           'data': data,'total tokens':len(data['tokens'])})
@@ -125,11 +125,11 @@ def ethplorer_address_info_with_address(request,wallet_address = None):
 #     api_key='28XVCAQXKFI2GN8GGB3SFHMVQ3XS2XTXK5'
 #     api_endpoint=f'https://api.etherscan.io/api?module=account&action=tokentx&address={wallet_address}&startblock=0&endblock=999999999&sort=asc&apikey={api_key}'
 #     api_endpoint=f'https://api.etherscan.io/api?module=account&action=tokenbalance&address={wallet_address}&sort=asc&apikey={api_key}'
-#     print(api_endpoint)
+#     #print(api_endpoint)
 
 #     response = requests.get(api_endpoint )
 #     data = response.json()
-#     print(data)
+#     #print(data)
 #     token_details=[]
 
 #     return  JsonResponse({'token_details':token_details,'data': data})
@@ -169,7 +169,7 @@ def all_overlap(request,wallet_address = '0x03770b07c5c315722c5866e64cde04e6e579
         wallet_info= overlap(request,wallet_address = wallet_addresses,return_dict=True)
         all_wallets_dict={**all_wallets_dict, **wallet_info}
         all_wallet_list.append(all_wallets_dict)
-    # print(all_wallets_dict)
+    # #print(all_wallets_dict)
     context={'all_wallets_dict':[{'wallet':oo['wallet'],'token_sum':oo['token_sum'],
                             'amount_of_token':oo['amount_of_token'],'wallets':oo['wallet'] }
                                                         for oo in all_wallet_list],
