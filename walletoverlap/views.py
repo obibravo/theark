@@ -113,6 +113,7 @@ def ethplorer_address_info(request,wallet_address = '0xc1b2c7b19b745e2d07d3a2525
 
         token_details.append([symbol,decimals,token_name,rawBalance,price,currency])
         #print(token_details,'\n')
+    if failed_token!=[]:return  JsonResponse({'total failed_token':failed_token})
 
     return  JsonResponse({'total failed_token':len(failed_token),'failed_token':failed_token,'token_details':token_details,
                           'data': data,'total tokens':len(data['tokens'])})
