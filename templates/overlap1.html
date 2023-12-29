@@ -1,0 +1,286 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TheArk - Advanced Digital Assets Analysis In The TheArk</title>
+
+  <!-- 
+    - favicon
+  -->
+  <link rel="shortcut icon" href="{% static  'favicon.svg' %}" type="image/svg+xml">
+
+  <!-- 
+    - custom css link
+  -->
+  <link rel="stylesheet" href="{% static  'assets/css/style.css' %}">
+
+  <!-- 
+    - google font link
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- 
+    - #HEADER
+  -->
+
+  <header class="header" data-header>
+    <div class="container">
+
+      <a href="#" class="logo">
+        <img src="{% static  'assets/images/logo.svg' %}" width="32" height="32" alt="TheArk logo">
+        TheArk
+      </a>
+
+      <nav class="navbar" data-navbar>
+        <ul class="navbar-list">
+
+          <li class="navbar-item">
+            <a href="#" class="navbar-link active" data-nav-link>Homepage</a>
+          </li>
+
+          <li class="navbar-item">
+            <a href="#" class="navbar-link" data-nav-link>Buy Crypto</a>
+          </li>
+
+          <li class="navbar-item">
+            <a href="#" class="navbar-link" data-nav-link>Markets</a>
+          </li>
+
+          <li class="navbar-item">
+            <a href="#" class="navbar-link" data-nav-link>Sell Crypto</a>
+          </li>
+
+          <li class="navbar-item">
+            <a href="#" class="navbar-link" data-nav-link>Blog</a>
+          </li>
+
+          <li class="navbar-item">
+            <a href="#" class="navbar-link" data-nav-link>BITUSDT</a>
+          </li>
+
+        </ul>
+      </nav>
+
+      <button class="nav-toggle-btn" aria-label="Toggle menu" data-nav-toggler>
+        <span class="line line-1"></span>
+        <span class="line line-2"></span>
+        <span class="line line-3"></span>
+      </button>
+
+      <a href="#" class="btn btn-outline">Wallet</a>
+
+    </div>
+  </header>
+
+
+
+
+
+  <main>
+    <article>
+
+
+        <section class="section market" aria-label="market update" data-section>
+        <div class="container">
+
+          <div class="title-wrapper">
+            <h2 class="h2 section-title">{{all_tokens_in_address.wallet}}</h2>
+
+            {% comment %} <a href="#" class="btn-link">See All Coins</a> {% endcomment %}
+          </div>
+
+          <div class="market-tab">
+
+            <h3 class="h4 section-title">Wallet Initial Net worth: {{all_tokens_in_address.token_sum}} at
+                 {{all_tokens_in_address.time_created}} with a total of {{all_tokens_in_address.amount_of_token}} tokens. </h3>
+            <ul class="tab-nav">
+
+              <li>
+                <button class="tab-btn active">View All</button>
+              </li>
+
+              <li>
+                <button class="tab-btn">Metaverse</button>
+              </li>
+
+              <li>
+                <button class="tab-btn">Entertainment</button>
+              </li>
+
+              <li>
+                <button class="tab-btn">Energy</button>
+              </li>
+
+              <li>
+                <button class="tab-btn">NFT</button>
+              </li>
+
+              <li>
+                <button class="tab-btn">Gaming</button>
+              </li>
+
+              <li>
+                <button class="tab-btn">Music</button>
+              </li>
+
+            </ul>
+
+            <table class="market-table">
+
+              <thead class="table-head">
+
+                <tr class="table-row table-title">
+
+                  <th class="table-heading"></th>
+
+                  <th class="table-heading" scope="col">#</th>
+
+                  <th class="table-heading" scope="col">Token Name</th>
+
+                  <th class="table-heading" scope="col">Quantity</th>
+
+                  <th class="table-heading" scope="col">24h %</th>
+
+                  <th class="table-heading" scope="col">Initial Price</th>
+
+                  <th class="table-heading" scope="col">Each Token Price</th>
+
+                  <th class="table-heading"></th>
+
+                </tr>
+
+              </thead>
+
+              <tbody class="table-body">
+                {% for SELECTED_ROWS in all_tokens_in_address.tokens %}
+                  <tr class="table-row">
+
+                    <td class="table-data">
+                      <button class="add-to-fav" aria-label="Add to favourite" data-add-to-fav>
+                        <ion-icon name="star-outline" aria-hidden="true" class="icon-outline"></ion-icon>
+                        <ion-icon name="star" aria-hidden="true" class="icon-fill"></ion-icon>
+                      </button>
+                    </td>
+
+                    <th class="table-data rank" scope="row">{{forloop.counter}}</th>
+                    <td class="table-data">
+                      <div class="wrapper">
+                        <img src="{% static  'assets/images/coin-8.svg' %}" width="20" height="20" alt="Avalanche logo" class="img">
+
+                        <h3>
+                          <a href="#" class="coin-name">{{SELECTED_ROWS.token_name}} <span class="span">AVAX</span></a>
+                        </h3>
+                      </div>
+                    </td>
+
+                    <td class="table-data last-price">{{SELECTED_ROWS.quantity}}</td>
+
+                    <td class="table-data last-update green">+1.41%</td>
+
+                    <td class="table-data market-cap">{{SELECTED_ROWS.token_initial_price}}</td>
+
+                    <td class="table-data market-cap">{{SELECTED_ROWS.each_token_price}}</td>
+{% comment %} 
+                    <td class="table-data">
+                      <a class="btn btn-outline" href="{% url "walletoverlap:overlap" SELECTED_ROWS.token_name %}">View Tokens</a>
+                    </td>
+ {% endcomment %}
+                  </tr>
+
+                {% endfor %}
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+      </section>
+
+
+
+
+
+
+      <section class="section about" aria-label="about" data-section>
+        <div class="container">
+
+          <figure class="about-banner">
+            <img src="{% static  'assets/images/about-banner.png' %}" width="748" height="436" loading="lazy" alt="about banner"
+            class="w-100">
+          </figure>
+
+          <div class="about-content">
+
+            <h2 class="h2 section-title">What Is TheArk</h2>
+
+            <p class="section-text">
+              We are a community of web3 experts changing the web3 space to a better place
+            </p>
+
+            <ul class="section-list">
+
+              <li class="section-item">
+                <div class="title-wrapper">
+                  <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+
+                  <h3 class="h3 list-title">View real-time cryptocurrency prices</h3>
+                </div>
+
+                <p class="item-text">
+                  Experience trading on a different level. You can use various types of trading algorithm on
+                  Spot Trade, Futures
+                  Trade, P2P, Staking, Mining, and margin.
+                </p>
+              </li>
+
+              <li class="section-item">
+                <div class="title-wrapper">
+                  <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+
+                  <h3 class="h3 list-title">About our technology</h3>
+                </div>
+
+                <p class="item-text">
+                  Use our technology for analysis for better decision in web3 space
+                </p>
+              </li>
+
+            </ul>
+
+            <a href="https://clabits.com/Eze%20%David%20%Obinna" class="btn btn-primary">About the developer</a>
+
+          </div>
+
+        </div>
+      </section>
+
+
+      
+    </article>
+  </main>
+
+
+  
+  <script src="{% static  'assets/js/script.js' %}"></script>
+
+  <!-- 
+    - ionicon link
+  -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+</body>
+
+</html>
